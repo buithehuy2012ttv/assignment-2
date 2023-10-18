@@ -5,19 +5,21 @@ module.exports = (sequelize, Sequelize) => {
             autoIncrement: true,
             primaryKey: true,
         },
-        // DEFINE YOUR MODEL HERE
+
         name: {
             type: Sequelize.STRING,
-            allowNull: true,
+            allowNull: false,
         },
-        number: {
+
+        phoneNumber: {
             type: Sequelize.STRING,
-            allowNull: Boolean,
+            allowNull: false,
         },
-        contactId: {
-            type: Sequelize.number,
-            foreignKey: true,
+
+        contactId:{
+            type: Sequelize.INTEGER,
         }
+        // DEFINE YOUR MODEL HERE
     });
   
     return Phone;

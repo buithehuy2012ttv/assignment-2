@@ -5,11 +5,13 @@ module.exports = (sequelize, Sequelize) => {
             autoIncrement: true,
             primaryKey: true,
         },
-        // DEFINE YOUR MODEL HERE
+
         name: {
             type: Sequelize.STRING,
-            allowNull: False,
-        }
+            allowNull: false,
+
+        },
+        // DEFINE YOUR MODEL HERE
     });
   
     return Contact;
