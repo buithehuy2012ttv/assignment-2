@@ -1,58 +1,83 @@
-import React, { useState} from "react";
+import React, { useState, useEffect } from "react";
+import Header from "./Header";
 import ContactList from "./ContactList";
 
+function AddContact() {
+  const [contact, setContact] = useState('');
+  const [contacts, setContacts] = useState([]); // State for storing contacts
 
-function AddContact ({ addNewContact }) {
-    const [contact, setContact] = useState('');
-
-    const handleInputChange = e => {
-        setContact(e.target.value);
+  // Define the fetchContacts function
+  const fetchContacts = async () => {
+    try {
+      const response = await fetch("http://localhost:5000/api/contacts");
+      if (response.ok) {
+        const data = await response.json();
+        setContacts(data); // Update the state with the fetched contacts
+      } else {
+        console.error("Failed to fetch contacts. Response status:", response.status);
+      }
+    } catch (error) {
+      console.error("Error:", error);
     }
-    //test endpoint
+  };
 
-   
-    const handleAddContact = async () => {
-        try {
-            console.log("Request payload:", { contact }); // Log the payload
-            const response = await fetch('http://localhost:5000/api/contacts', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ contact: contact }),
-            });
-    
-            if (response.ok) {
-                console.log("Contact has been added");
+  useEffect(() => {
+    // Initial fetch of contacts
+    fetchContacts();
+  }, []);
 
-                //fix 1
-                addNewContact({ name: contact }); // Add the new contact to the parent component
-                setContact('');
+  const handleInputChange = (e) => {
+    setContact(e.target.value);
+  }
 
-            } else {
-                console.error('Failed to add contact. Response status:', response.status);
-                const data = await response.json();
-                console.error('Error response:', data);
-            }
-        } catch (error) {
-            console.error('Error:', error);
-        }
+  const handleAddContact = async () => {
+    try {
+      const response = await fetch("http://localhost:5000/api/contacts/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: contact,
+        }),
+      });
 
-    };
-    return (
-        <div>
-            <input
-            type = "text"
-            placeholder="Enter your contact"
-            name="name"
-            autoComplete="tel"
+      if (response.ok) {
+        const data = await response.json();
+        console.log("New contact added:", data);
+        fetchContacts(); // Call the fetchContacts function to update the contact list
+        setContact('');
+      } else {
+        console.error("Failed to add contact. Response status:", response.status);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  }
+
+  const onDeleteContact = (contactId) => {
+    // Implement the logic to remove the contact from the state
+    const updatedContacts = contacts.filter((contact) => contact.id !== contactId);
+    setContacts(updatedContacts);
+  };
+
+  return (
+    <div >
+      <Header  />
+      <div className="item">
+          <input className="center"
+            type="text"
+            placeholder="Input your contact"
             value={contact}
             onChange={handleInputChange}
-            />
-            <button type="checked" onClick={handleAddContact}>
-                Add
-            </button>
-        </div>
-    )
+          />
+          <button className="basic-button"  type="button" onClick={handleAddContact}>
+            Add
+          </button>
+      </div>
+      <div className="item"><ContactList contacts={contacts} onDeleteContact={onDeleteContact} /></div>
+    </div>
+  );
 }
+
 export default AddContact;

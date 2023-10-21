@@ -1,24 +1,21 @@
-import React, { useState } from "react";
-import AddContact from "./AddContact";
-import Header from "./Header";
-import GetContact from "./GetContact";
+import React from "react";
+import PhoneList from "./PhoneList";
+import DeleteContact from "./DeleteContact";
 
-const ContactList = () => {
-    const [contacts, setContacts] = useState([]);
-
-    const addNewContact = (newContact) => {
-        setContacts([...contacts, newContact]);
-      };
-
-    return (
-        <div>
-            <Header />
-            <AddContact addNewContact={addNewContact} />
-            <GetContact contacts={contacts} />
-            
-
+function ContactList({ contacts, onDeleteContact }) {
+  return (
+    <div>
+      {contacts.map((contact) => (
+        <div className="space" key={contact.id}>
+          <li className="space">{contact.name}</li>
+          <div className="space"> 
+               <DeleteContact contactId={contact.id} onDeleteContact={onDeleteContact} />
+           </div> 
+          <PhoneList contactId={contact.id} />
         </div>
-
-    )
+      ))}
+    </div>
+  );
 }
+
 export default ContactList;
